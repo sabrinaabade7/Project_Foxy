@@ -17,6 +17,9 @@ public class PlayerControler : MonoBehaviour
     
     private float horizontal;
     private float vertical;
+
+    [Header("Attack")] 
+    [SerializeField] private ParticleSystem fxAttack;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

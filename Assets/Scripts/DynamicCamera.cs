@@ -4,7 +4,7 @@ public class DynamicCamera : MonoBehaviour
 {
     [SerializeField] private GameObject camB;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+   
     private void OnTriggerEnter(Collider other)
     {
         switch (other.tag)
