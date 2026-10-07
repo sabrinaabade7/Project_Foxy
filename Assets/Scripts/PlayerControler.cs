@@ -43,6 +43,12 @@ public class PlayerControler : MonoBehaviour
          anim.SetBool("isWalk", isWalk);
     }
 
+    private void Attack()
+    {
+        anim.SetTrigger("Attack");
+    }
+
+    
     private void Movecharacter()
     {
          direction = new Vector3(horizontal, 0f, vertical).normalized;
@@ -72,7 +78,7 @@ public class PlayerControler : MonoBehaviour
                 
                 if (Input.GetButtonDown("Fire1"))
                 {
-                    anim.SetTrigger("Attack");
+                    Attack();
                 }
     }
     
