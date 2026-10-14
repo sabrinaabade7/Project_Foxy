@@ -16,10 +16,15 @@ public class PlayerControler : MonoBehaviour
     private float horizontal;
     private float vertical;
 
-    [Header("Attack")] [SerializeField] private ParticleSystem fxAttack;
-
+    [Header("Attack")]
+    [SerializeField] private ParticleSystem fxAttack;
     private bool isAttack;
-
+    [SerializeField] private Transform hitbox;
+    [Range(0.1f, 1f)] 
+    [SerializeField] private float hitRange = 0.5f;
+    [SerializeField] private Collider[] hitInfo;
+    [SerializeField] private LayerMask hitMask;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
