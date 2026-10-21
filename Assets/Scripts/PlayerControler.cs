@@ -24,6 +24,7 @@ public class PlayerControler : MonoBehaviour
     [SerializeField] private float hitRange = 0.5f;
     [SerializeField] private Collider[] hitInfo;
     [SerializeField] private LayerMask hitMask;
+    [SerializeField] private int amountDamage;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,6 +53,13 @@ public class PlayerControler : MonoBehaviour
         isAttack = true;
         anim.SetTrigger("Attack");
         fxAttack.Emit(1);
+        
+        hitInfo = Physics.OverlapSphere(hitbox.position, hitRange, hitMask);
+
+        foreach (Collider col in hitInfo)
+        {
+            col.gameObject.SendMessage("GetHit", amountDamage, SendMessageOptions.DontRequireReceiver);
+        }
     }
 
     public void AttackDone()
@@ -89,6 +97,14 @@ private void Movecharacter()
                 }
                 
     }
-    
+
+    private void OnDrawGizmosSelected()
+    {
+        if (hitbox != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(hitbox.position, hitRange);
+        }
+    }
 }
 
