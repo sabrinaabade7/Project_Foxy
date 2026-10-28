@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Grass : MonoBehaviour
@@ -7,9 +8,13 @@ public class Grass : MonoBehaviour
     
     private void GetHit(int amount)
     {
-        transform.localScale = new Vector3(1, 1, 1);
-        fxHit.Emit(10);
-        isCut = true;
+        if (!isCut)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+            fxHit.Emit(10);
+            isCut = true;
+        }
+        
     }
-
+    
 }
