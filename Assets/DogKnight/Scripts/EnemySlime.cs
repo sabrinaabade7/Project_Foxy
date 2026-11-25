@@ -1,24 +1,31 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemySlime : MonoBehaviour
 {
+    private GameManager gameManager;
     private Animator anim;
 
     [SerializeField] private int hp;
     private bool isDie;
 
     [SerializeField] private float corroutineTime;
-
+    
     [SerializeField] private EnemyState state;
+    
+    [Header("AI Details")] 
+    private NavMeshAgent agent;
+    private Vector3 destination;
+    private int idWayPoint;
+    
 
-    [SerializeField] private const float idleWaitTime = 3f;
-    [SerializeField] private const float patroWaitTime = 5f;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+// Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         anim = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        gameManager = FindAnyObjectByType((typeof(GameManager)) as GameManager;
         
         ChangeState(state);
     }
@@ -53,7 +60,7 @@ public class EnemySlime : MonoBehaviour
     private IEnumerator Died()
     {
         isDie = true;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(corroutineTime);
         Destroy(this.gameObject);
     }
 
@@ -80,15 +87,20 @@ public class EnemySlime : MonoBehaviour
 
     private void ChangeState(EnemyState newState) //responsavel por informar o que vai acontecer.
     {
-        StopCoroutine(IdleRoutine());
+        StopAllCoroutines();
         state = newState;
         
         switch (state)
         {
-            case EnemyState.IDLE:
+            case EnemyState.IDLE: 
+                destination = transform.position;
+                agent.destination = destination;
                 StartCoroutine(IdleRoutine());
                 break;
             case EnemyState.PATROL:
+                idWayPoint = Random.Range(0, gameManager.slimeWayPoints.Length);
+                destination = gameManager.slimeWayPoints[idWayPoint].position;
+                agent.destination = destination;
                 StartCoroutine(PatrolRoutine());
                 break;
             case EnemyState.ALERT:
@@ -98,9 +110,28 @@ public class EnemySlime : MonoBehaviour
 
     private IEnumerator IdleRoutine()
     {
-        yield return new WaitForSeconds(idleWaitTime);
+        yield return new WaitForSeconds(gameManager.idleWaitTime);
 
-        if (Random.Range(0, 100) < 50)
+        StayStill(50);
+    }
+
+    private IEnumerator PatrolRoutine()
+    {
+        yield return new WaitUntil(() => agent.remainingDistance <= 0);
+        
+        StayStill(30);
+    }
+
+    private int Rand()
+    {
+        int rand = Random.Range(0, 100);
+        return rand;
+
+    }
+
+    private void StayStill(int stayThreshold)
+    {
+        if (Rand() <= stayThreshold)
         {
             ChangeState(EnemyState.IDLE);
         }
@@ -108,13 +139,5 @@ public class EnemySlime : MonoBehaviour
         {
             ChangeState(EnemyState.PATROL);
         }
-        
     }
-
-    private IEnumerator PatrolRoutine()
-    {
-        yield return new WaitForSeconds(patroWaitTime);
-        ChangeState(EnemyState.IDLE);
-    }
-
 }
