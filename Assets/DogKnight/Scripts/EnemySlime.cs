@@ -10,7 +10,7 @@ public class EnemySlime : MonoBehaviour
     [SerializeField] private int hp;
     private bool isDie;
 
-    [SerializeField] private float corroutineTime;
+    [SerializeField] private float corroutinetime;
     
     [SerializeField] private EnemyState state;
     
@@ -25,7 +25,7 @@ public class EnemySlime : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        gameManager = FindAnyObjectByType((typeof(GameManager)) as GameManager;
+        gameManager = FindAnyObjectByType((typeof(GameManager))) as GameManager;
         
         ChangeState(state);
     }
@@ -33,7 +33,7 @@ public class EnemySlime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        StateManager();
     }
 
     private void GetHit(int amount)
@@ -48,6 +48,7 @@ public class EnemySlime : MonoBehaviour
         if (hp > 0)
         {
             anim.SetTrigger("getHit");
+            ChangeState(EnemyState.FURY);
         }
         else
         {
@@ -60,7 +61,7 @@ public class EnemySlime : MonoBehaviour
     private IEnumerator Died()
     {
         isDie = true;
-        yield return new WaitForSeconds(corroutineTime);
+        yield return new WaitForSeconds (corroutinetime);
         Destroy(this.gameObject);
     }
 
@@ -79,6 +80,8 @@ public class EnemySlime : MonoBehaviour
             case EnemyState.FOLLOW:
                 break;
             case EnemyState.FURY:
+                destination = gameManager.player.position;
+                agent.destination = destination;
                 break;
 
         }
@@ -88,6 +91,7 @@ public class EnemySlime : MonoBehaviour
     private void ChangeState(EnemyState newState) //responsavel por informar o que vai acontecer.
     {
         StopAllCoroutines();
+        
         state = newState;
         
         switch (state)
@@ -104,6 +108,10 @@ public class EnemySlime : MonoBehaviour
                 StartCoroutine(PatrolRoutine());
                 break;
             case EnemyState.ALERT:
+                break;
+            case EnemyState.FURY:
+                destination = transform.position;
+                agent.destination = destination;
                 break;
         }
     }
